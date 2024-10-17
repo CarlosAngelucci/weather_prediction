@@ -27,6 +27,7 @@ def consolidate_weather_data(data_folder=data_path):
     for col in ['main.temp', 'main.feels_like', 'main.temp_min', 'main.temp_max', 'main.pressure', 'main.humidity', 'wind.speed', 'wind.deg', 'clouds.all']:
         if df[col].dtype != float:
             df[col] = df[col].astype(float)
+    # se a coluna date estiver usando - trocar para /
 
     # Return the concatenated dataframe
     df.to_csv(os.path.join(data_folder, 'processed', 'consolidado.csv'), index=False)

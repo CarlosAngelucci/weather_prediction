@@ -7,7 +7,7 @@ def load_data():
     return df
 
 df = load_data()
-df.Date = pd.to_datetime(df.Date, format='%Y/%m/%d %H:%M:%S')
+df.Date = pd.to_datetime(df.Date, format='%Y-%m-%d %H:%M:%S')
 
 #  Titulo da página
 st.set_page_config(page_title='ML Forecast - Weather Campinas', layout='wide')

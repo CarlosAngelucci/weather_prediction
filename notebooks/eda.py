@@ -24,7 +24,7 @@ dict_replace = {'name': 'Cidade',
 df = df.rename(columns=dict_replace)
 
 # %%
-df.Date = pd.to_datetime(df.Date, format="%d/%m/%Y %H:%M:%S")
+df.Date = pd.to_datetime(df.Date, format="%Y/%m/%d %H:%M:%S")
 
 # %%
-df.Date.info()
+consolidate_weather_data()
