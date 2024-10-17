@@ -28,3 +28,5 @@ df.Date = pd.to_datetime(df.Date, format="%Y/%m/%d %H:%M:%S")
 
 # %%
 consolidate_weather_data()
+
+# %%

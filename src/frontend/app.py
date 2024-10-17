@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from sidebar import config_sidebar
+from graphs import plot_graphs
 
 def load_data():
     df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/data/processed/consolidado.csv')
@@ -8,6 +10,7 @@ def load_data():
 
 df = load_data()
 df.Date = pd.to_datetime(df.Date, format='%Y-%m-%d %H:%M:%S')
+df = df.sort_values('Date')
 
 #  Titulo da página
 st.set_page_config(page_title='ML Forecast - Weather Campinas', layout='wide')
@@ -15,29 +18,8 @@ st.set_page_config(page_title='ML Forecast - Weather Campinas', layout='wide')
 #  Titulo de aplicação
 st.title('Weather Analysis and Forecast With Machine Learning - Campinas')
 
-#  Selecao de gráficos
-st.sidebar.header('Select the chart type')
-option = st.sidebar.selectbox('Choose a chart type', 
-                              ('Temperatura', 'Sensação Térmica', 'Temperatura Mínima', 'Temperatura Máxima', 'Umidade'))
+#  Sidebar - chama as configuracoes que estao no arquivo sidebar.py
+option, graph_type = config_sidebar()
 
-
-#  Plotagem de gráficos
-if option == 'Temperatura':
-    fig = px.scatter(df, x='Date', y='main.temp', title='Temperature')
-    st.plotly_chart(fig)
-
-elif option == 'Sensação Térmica':
-    fig = px.scatter(df, x='Date', y='main.feels_like', title='Feels Like')
-    st.plotly_chart(fig)
-
-elif option == 'Temperatura Mínima':
-    fig = px.scatter(df, x='Date', y='main.temp_min', title='Minimum Temperature')
-    st.plotly_chart(fig)
-
-elif option == 'Temperatura Máxima':
-    fig = px.scatter(df, x='Date', y='main.temp_max', title='Maximum Temperature')
-    st.plotly_chart(fig)
-
-elif option == 'Umidade':
-    fig = px.scatter(df, x='Date', y='main.humidity', title='Humidity')
-    st.plotly_chart(fig)
+#  Plotagem de gráficos - chama as configuracoes que estao no arquivo graphs.py
+plot_graphs(option=option, df=df, graph_type=graph_type)
