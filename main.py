@@ -14,7 +14,7 @@ def main():
     else:
         print('Error getting data')
 
-df = consolidate_weather_data()
+    consolidate_weather_data()
 
 if __name__ == '__main__':
     main()

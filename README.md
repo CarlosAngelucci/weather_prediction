@@ -1,0 +1,1 @@
+Using this api: https://openweathermap.org/current

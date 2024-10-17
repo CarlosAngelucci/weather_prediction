@@ -25,7 +25,8 @@ def save_weather_data(data, filename='Campinas'):
     timestamp = now.strftime("%d_%m_%Y_%H_%M_%S") # Format timestamp
     filename = f'{filename}_{timestamp}' # Add timestamp to filename
     df = pd.json_normalize(data) # Convert json to dataframe
-    
+    df['Date'] = now.strftime('%Y/%m/%d %H:%M:%S') # Add Date column
+    df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S') # Convert Date column to datetime
     if not os.path.exists('data'):
         os.makedirs('data') # Create data folder if not exists
     df.to_csv(f'data/{filename}.csv', index=False) # Save data to csv file
