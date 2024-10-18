@@ -14,3 +14,14 @@ models:
       learning_rate: 0.1
       random_state: 42
       objective: 'reg:squarederror'
+
+features:
+  - main.temp
+  - main.feels_like
+  - main.temp_min
+  - main.temp_max
+  - main.humidity
+  - wind.speed
+
+target:
+  - main.temp
