@@ -1,14 +1,14 @@
 # %%
 import pandas as pd
 import pickle
+import sys
+import os
+from pathlib import Path
 
 from sklearn.ensemble import RandomForestRegressor
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 
-import sys
-import os
-from pathlib import Path
 
 CODE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(CODE_DIR))
@@ -19,6 +19,27 @@ from data_processing.__pycache__.feature_engineering import feature_engineering
 
 # %%
 def train_model():
+    """
+    Treina modelos de previsão de temperatura utilizando Random Forest e XGBoost com base em um conjunto de dados de entrada.
+
+    Esta função realiza as seguintes etapas:
+    1. Carrega os dados de temperatura de um arquivo CSV.
+    2. Aplica engenharia de características para melhorar os dados.
+    3. Realiza o pré-processamento dos dados, dividindo-os em conjuntos de treino e teste.
+    4. Treina os modelos especificados na configuração (Random Forest e XGBoost) com os dados de treino.
+    5. Faz previsões com os modelos treinados nos dados de teste.
+    6. Calcula e imprime o erro quadrático médio (MSE) para cada modelo.
+    7. Salva os modelos treinados em arquivos usando pickle.
+    8. Cria um DataFrame com as temperaturas reais e previstas, e o salva em um arquivo CSV.
+
+    A função não retorna valores, mas salva os modelos treinados e as previsões em arquivos específicos.
+
+    Exceções:
+        Se houver um erro ao criar o DataFrame final (por exemplo, se os tamanhos dos arrays não coincidirem), uma mensagem de erro será exibida.
+
+    Exemplos:
+        train_model()
+    """
     config = load_yaml_config()
 
     # Load data

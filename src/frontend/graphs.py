@@ -55,8 +55,6 @@ def plot_graphs(option, df, graph_type):
         st.write('Invalid graph type')
         return
     
-    # Ajusta posicao do rotulo de dados
-    # fig.update_traces(textposition='top right')
 
     st.plotly_chart(fig)
 
@@ -77,4 +75,5 @@ def plot_predictions(df):
                         xaxis_title='Date',
                         yaxis_title='Temperature (°C)',
                         template='presentation')
+    fig.update_traces(textposition='top right')
     return fig
