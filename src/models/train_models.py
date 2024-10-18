@@ -1,5 +1,6 @@
 # %%
 import pandas as pd
+import pickle
 
 from sklearn.ensemble import RandomForestRegressor
 import xgboost as xgb
@@ -41,6 +42,9 @@ def train_model():
             y_pred_rf.extend(y_pred)
             mse = mean_squared_error(y_test, y_pred)
             print(f'Model: {model} - MSE: {mse}')
+            # save model
+            with open('RF_model.pkl', 'wb') as file:
+                pickle.dump(model, file)
             
         elif model == 'xgboost':
             model = xgb.XGBRegressor(**config['models'][model]['params'])
@@ -49,10 +53,10 @@ def train_model():
             y_pred_xgb.extend(y_pred)
             mse = mean_squared_error(y_test, y_pred)
             print(f'Model: {model} - MSE: {mse}')
+            with open('XGBoost_model.pkl', 'wb') as file:
+                pickle.dump(model, file)
         else:
             print('Model not found')
-        # verificar tamanhos dos arrayas
-
 
         # print results
         print(f'Model: {model} - MSE: {mse}')
@@ -69,7 +73,5 @@ def train_model():
     else:
         print("Erro ao criar dataframe final")
     
-
-
 if __name__ == '__main__':
     train_model()

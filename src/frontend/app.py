@@ -23,7 +23,7 @@ df_predictions = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_pre
 st.set_page_config(page_title='Weather Analysis and Forecast With Machine Learning - Campinas',
                    page_icon=':partly_sunny:',
                    layout='wide',
-                   initial_sidebar_state='collapsed')
+                   initial_sidebar_state='expanded')
 
 #  Sidebar - chama as configuracoes que estao no arquivo sidebar.py
 option, graph_type, page = config_sidebar()
@@ -38,7 +38,7 @@ if page == 'Home' or page == None:
     display_table(df)
 
 elif page == 'Predição':
-    st.title('ML Forecast - Weather Campinas')
+    st.title('ML Forecast - Weather Campinas.')
 
     #  Plotagem de gráficos - chama as configuracoes que estao no arquivo graphs.py
     st.plotly_chart(plot_predictions(df_predictions))
