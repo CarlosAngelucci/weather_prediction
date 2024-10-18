@@ -24,12 +24,15 @@ def train_model():
     df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv')
 
     # feature engineering
-    df = feature_engineering(df)
+    df_engineered = feature_engineering(df)
 
-    df = preprocess_data(df)
+    # df_final = preprocess_data(df_engineered)
 
     # preprocess data
-    X_train, X_test, y_train, y_test = preprocess_data(df)
+    X_train, X_test, y_train, y_test = preprocess_data(df_engineered)
+
+    y_pred_rf = []
+    y_pred_xgb = []
 
     # Train model
     for model in config['models']:
@@ -37,6 +40,7 @@ def train_model():
             model = RandomForestRegressor(**config['models'][model]['params'])
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
+            y_pred_rf.extend(y_pred)
             mse = mean_squared_error(y_test, y_pred)
             print(f'Model: {model} - MSE: {mse}')
             
@@ -44,6 +48,7 @@ def train_model():
             model = xgb.XGBRegressor(**config['models'][model]['params'])
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
+            y_pred_xgb.extend(y_pred)
             mse = mean_squared_error(y_test, y_pred)
             print(f'Model: {model} - MSE: {mse}')
         else:
@@ -51,6 +56,13 @@ def train_model():
         
         # print results
         print(f'Model: {model} - MSE: {mse}')
+    # save both predictions as y_pred_rf and y_pred_xgb to add in a final dataframe containing the real values, features and predictions
+    df_final = pd.DataFrame({'Temperatura Real': y_test, 
+                             'Temperatura Prevista por Random Forest': y_pred_rf, 
+                             'Temperatura Prevista por XGBoost': y_pred_xgb})
+    df_final.to_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/predictions.csv', index=False)
+    
+
 
 if __name__ == '__main__':
     train_model()

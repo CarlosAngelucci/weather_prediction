@@ -33,4 +33,3 @@ def preprocess_data(df):
 
     return X_train, X_test, y_train, y_test
 
-X_train, X_test, y_train, y_test = preprocess_data(df)
