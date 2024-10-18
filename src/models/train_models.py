@@ -26,10 +26,8 @@ def train_model():
     # feature engineering
     df_engineered = feature_engineering(df)
 
-    # df_final = preprocess_data(df_engineered)
-
     # preprocess data
-    X_train, X_test, y_train, y_test = preprocess_data(df_engineered)
+    X_train, X_test, y_train, y_test, date_col_test = preprocess_data(df_engineered)
 
     y_pred_rf = []
     y_pred_xgb = []
@@ -53,14 +51,23 @@ def train_model():
             print(f'Model: {model} - MSE: {mse}')
         else:
             print('Model not found')
-        
+        # verificar tamanhos dos arrayas
+
+
         # print results
         print(f'Model: {model} - MSE: {mse}')
-    # save both predictions as y_pred_rf and y_pred_xgb to add in a final dataframe containing the real values, features and predictions
-    df_final = pd.DataFrame({'Temperatura Real': y_test, 
-                             'Temperatura Prevista por Random Forest': y_pred_rf, 
-                             'Temperatura Prevista por XGBoost': y_pred_xgb})
-    df_final.to_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/predictions.csv', index=False)
+
+    y_test = pd.Series(y_test).reset_index(drop=True)
+    y_pred_rf = pd.Series(y_pred_rf).reset_index(drop=True)
+    y_pred_xgb = pd.Series(y_pred_xgb).reset_index(drop=True)
+    if len(date_col_test) == len(y_test) == len(y_pred):
+        df_final = pd.DataFrame({'Date': date_col_test.reset_index(drop=True),
+                                'Temperatura Real': y_test, 
+                                'Temperatura Prevista por Random Forest': y_pred_rf, 
+                                'Temperatura Prevista por XGBoost': y_pred_xgb})
+        df_final.to_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/predictions.csv', index=False)
+    else:
+        print("Erro ao criar dataframe final")
     
 
 

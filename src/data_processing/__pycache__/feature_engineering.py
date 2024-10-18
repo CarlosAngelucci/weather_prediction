@@ -42,7 +42,7 @@ def create_lag_features(df, lags=range(1, 4)):
         
     df.dropna(inplace=True)
 
-    df_final = df[features + [f'{feature}_lag_{lag}' for feature in features for lag in lags]]
+    df_final = df[['Date'] + features + [f'{feature}_lag_{lag}' for feature in features for lag in lags]]
     return df_final
 # %%
 def feature_engineering(df):

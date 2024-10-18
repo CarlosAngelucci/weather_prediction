@@ -58,3 +58,8 @@ def plot_graphs(option, df, graph_type):
     # fig.update_traces(textposition='top right')
 
     st.plotly_chart(fig)
+
+def plot_predictions(df, graph_type):
+    if graph_type == 'line':
+        fig = px.line(df, x='Date', y='main.temp', title='Temperature', text='main.temp', template='presentation', markers=True)
+

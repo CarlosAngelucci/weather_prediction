@@ -15,21 +15,25 @@ from utils.load_yaml_config import load_yaml_config
 processed_data_path = '/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv'
 consolidate_data  = pd.read_csv(processed_data_path)
 
-# yaml_config = load_yaml_config()
 # %%
 df = feature_engineering(consolidate_data)
 # %%
 def preprocess_data(df):
     yaml_config = load_yaml_config()
+
+    date_col = df['Date']
+
     target = yaml_config['target'][0]
-    X = df.drop(columns=target, axis=1)
+    X = df.drop(columns=[target, 'Date'], axis=1)
     y = df[target]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    date_col_train, date_col_test = train_test_split(date_col, test_size=0.2, random_state=42)
 
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
-    return X_train, X_test, y_train, y_test
+    return X_train, X_test, y_train, y_test, date_col_test
 

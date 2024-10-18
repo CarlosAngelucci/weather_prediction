@@ -4,6 +4,10 @@ import plotly.express as px
 
 def config_sidebar():
     #  Selecao de gráficos
+    st.sidebar.title('Menu')
+    page = st.sidebar.radio('Selecione a página', 
+                            ["Home", "Predição"])
+    
     st.sidebar.header('Select the variable to be plotted')
     option = st.sidebar.selectbox('Choose a meteorological variable', 
                                 ('Temperature', 'Feels Like', 'Minimum Temperature', 'Maximum Temperature', 'Humidity'))
@@ -24,4 +28,4 @@ def config_sidebar():
             Repositório do Projeto
         </a>
                         """, unsafe_allow_html=True)
-    return option, graph_type
+    return option, graph_type, page
