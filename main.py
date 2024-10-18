@@ -2,9 +2,7 @@
 import requests
 import pandas as pd
 import os
-from src.api.weather_api import fetch_weather_data, save_weather_data
-from src.data_processing.process_data import consolidate_weather_data
-
+from src.api.weather_api import fetch_weather_data, save_weather_data, consolidate_weather_data
 
 def main():
     weather_data = fetch_weather_data()

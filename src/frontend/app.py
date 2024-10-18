@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from sidebar import config_sidebar
 from graphs import plot_graphs
+from table import display_table
 
 def load_data():
     df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/data/processed/consolidado.csv')
@@ -23,3 +24,8 @@ option, graph_type = config_sidebar()
 
 #  Plotagem de gráficos - chama as configuracoes que estao no arquivo graphs.py
 plot_graphs(option=option, df=df, graph_type=graph_type)
+
+
+#  Tabela de dados
+display_table(df)
+

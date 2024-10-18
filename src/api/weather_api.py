@@ -30,3 +30,23 @@ def save_weather_data(data, filename='Campinas'):
     if not os.path.exists('data'):
         os.makedirs('data') # Create data folder if not exists
     df.to_csv(f'data/{filename}.csv', index=False) # Save data to csv file
+
+data_path = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/data"
+
+def consolidate_weather_data(data_folder=data_path):
+    files = os.listdir(data_folder)  # Get all files in data folder
+    dfs = []  # Create an empty list to store the dataframes
+    for file in files: # Loop through the files
+        if file.endswith('.csv'):   # Check if the file is a csv file
+            df = pd.read_csv(os.path.join(data_folder, file)) # Read the csv file
+            dfs.append(df)  # Append the dataframe to the list
+    
+    df = pd.concat(dfs) # Concatenate all dataframes in the list
+   
+    for col in ['main.temp', 'main.feels_like', 'main.temp_min', 'main.temp_max', 
+                'main.pressure', 'main.humidity', 'wind.speed', 'wind.deg', 'clouds.all']:  # turn temperature columns into float if they are not already
+        if df[col].dtype != float:
+            df[col] = df[col].astype(float)
+
+    df.to_csv(os.path.join(data_folder, 'processed', 'consolidado.csv'), index=False)
+    return df     # Return the concatenated dataframe
