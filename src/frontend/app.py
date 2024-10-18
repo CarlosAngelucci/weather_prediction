@@ -6,7 +6,7 @@ from graphs import plot_graphs
 from table import display_table
 
 def load_data():
-    df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/data/processed/consolidado.csv')
+    df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv')
     return df
 
 df = load_data()
