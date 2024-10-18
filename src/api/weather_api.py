@@ -8,6 +8,9 @@ load_dotenv(os.path.join('configs', '.env'))
 
 API_KEY = os.getenv('API_KEY')
 
+data_path = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/raw"
+data_path_processed = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed"
+
 def fetch_weather_data(lat=-22.9056, lon=-47.0608, API_KEY=API_KEY):
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
     response = requests.get(url)
@@ -21,17 +24,16 @@ def fetch_weather_data(lat=-22.9056, lon=-47.0608, API_KEY=API_KEY):
         raise Exception(f"Erro: {response.status_code}, {response.text}")
 
 def save_weather_data(data, filename='Campinas'):
-    now = datetime.now()
+    now = datetime.now() # Get current date and time
     timestamp = now.strftime("%d_%m_%Y_%H_%M_%S") # Format timestamp
     filename = f'{filename}_{timestamp}' # Add timestamp to filename
+
     df = pd.json_normalize(data) # Convert json to dataframe
     df['Date'] = now.strftime('%Y/%m/%d %H:%M:%S') # Add Date column
     df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S') # Convert Date column to datetime
-    if not os.path.exists('data'):
-        os.makedirs('data') # Create data folder if not exists
-    df.to_csv(f'data/{filename}.csv', index=False) # Save data to csv file
 
-data_path = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/data"
+    df.to_csv(data_path + f'/{filename}.csv', index=False) # Save data to csv file
+
 
 def consolidate_weather_data(data_folder=data_path):
     files = os.listdir(data_folder)  # Get all files in data folder
@@ -48,5 +50,5 @@ def consolidate_weather_data(data_folder=data_path):
         if df[col].dtype != float:
             df[col] = df[col].astype(float)
 
-    df.to_csv(os.path.join(data_folder, 'processed', 'consolidado.csv'), index=False)
+    df.to_csv(os.path.join(data_path_processed, 'consolidado.csv'), index=False)
     return df     # Return the concatenated dataframe
