@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 def plot_graphs(option, df, graph_type):
     """
@@ -59,7 +60,21 @@ def plot_graphs(option, df, graph_type):
 
     st.plotly_chart(fig)
 
-def plot_predictions(df, graph_type):
-    if graph_type == 'line':
-        fig = px.line(df, x='Date', y='main.temp', title='Temperature', text='main.temp', template='presentation', markers=True)
+def plot_predictions(df):
+    df.sort_values('Date', inplace=True)
+    fig = go.Figure()
 
+    #  adicionar a linha de temperatura real
+    fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Real'], mode='lines', name='Real Temperature', line=dict(color='blue')))
+
+    #  adicionar as previsoes da random forest
+    fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Prevista por Random Forest'], mode='lines', name='Random Forest', line=dict(color='red')))
+
+    #  adicionar as previsoes da XGBoost
+    fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Prevista por XGBoost'], mode='lines', name='XGBoost', line=dict(color='green')))
+
+    fig.update_layout(title='Temperature Predictions',
+                        xaxis_title='Date',
+                        yaxis_title='Temperature (°C)',
+                        template='presentation')
+    return fig
