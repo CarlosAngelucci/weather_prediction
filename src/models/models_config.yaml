@@ -16,6 +16,7 @@ models:
       objective: 'reg:squarederror'
 
 features:
+  - Date
   - main.temp
   - main.feels_like
   - main.temp_min

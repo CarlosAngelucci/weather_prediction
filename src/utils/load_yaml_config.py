@@ -1,3 +1,4 @@
+# %%
 import yaml
 
 yaml_path = '/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/models/models_config.yaml'
@@ -21,3 +22,11 @@ def load_yaml_config(yaml_path=yaml_path):
     with open(yaml_path, 'r') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
     return config
+
+# %%
+# import pandas as pd
+# configs = load_yaml_config()
+# features = configs['features'][2:]
+# df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv')
+# df = df[features]
+# df

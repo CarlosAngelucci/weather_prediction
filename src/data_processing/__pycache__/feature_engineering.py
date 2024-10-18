@@ -2,12 +2,14 @@
 import pandas as pd
 import os
 import sys
+from pathlib import Path
+
+CODE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(CODE_DIR))
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from utils.load_yaml_config import load_yaml_config
-
-yaml_config = load_yaml_config()
-
+# %%
 def create_lag_features(df, lags=range(1, 4)):
     """
     Create lagged features for the specified columns in the DataFrame.
@@ -31,7 +33,8 @@ def create_lag_features(df, lags=range(1, 4)):
         KeyError: If specified features in the YAML configuration are not present 
                   in the DataFrame.
     """
-    features = yaml_config['features']
+    yaml_config = load_yaml_config()
+    features = yaml_config['features'][1:]
 
     for feature in features:
         for lag in lags:
@@ -41,9 +44,7 @@ def create_lag_features(df, lags=range(1, 4)):
 
     df_final = df[features + [f'{feature}_lag_{lag}' for feature in features for lag in lags]]
     return df_final
-
+# %%
 def feature_engineering(df):
-    df = create_lag_features(df)
-    df = df.reset_index(drop=True)
-    return df
-
+    df_engineered = create_lag_features(df)
+    return df_engineered
