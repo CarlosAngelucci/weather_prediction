@@ -3,17 +3,21 @@ import pandas as pd
 import pickle
 import sys
 from pathlib import Path
+import yaml
 
-CODE_DIR = Path(__file__).resolve().parents[1]
+CODE_DIR = Path(__file__).resolve().parents[0]
 sys.path.append(str(CODE_DIR))
 
-from data_processing.__pycache__.feature_engineering import feature_engineering
-from data_processing.__pycache__.data_preprocessing import preprocess_data
-
+from src.data_processing.__pycache__.feature_engineering import feature_engineering
+from src.data_processing.__pycache__.data_preprocessing import preprocess_data
+from src.utils.load_yaml_config import load_yaml_config
 
 from sklearn.preprocessing import StandardScaler
-# %%
 
+# %%
+config = load_yaml_config()
+consolidated_data_path = config['paths']['processed_path_data']
+predictions_path = config['paths']['prediction_path_data']
 # %%
 def predict_futre_rf():
     with open('/Users/kaduangelucci/Documents/Estudos/weather_prediction/RF_model.pkl', 'rb') as model_file:
@@ -23,7 +27,7 @@ def predict_futre_rf():
         xgb_model = pickle.load(model_xgb_file)
 
     
-    df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv')
+    df = pd.read_csv(consolidated_data_path)
     df = feature_engineering(df)
     ultimo_registro = df.iloc[-1]
 
@@ -74,7 +78,7 @@ def predict_futre_rf():
     except FileNotFoundError:
         df_predicoes = predicao_df
 
-    df_predicoes.to_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/predictions.csv', index=False)
+    df_predicoes.to_csv(predictions_path, index=False)
 
     print(f"Predição do Random Forest: {predicao_rf} \nPredicao do XGBoost: {predicao_xgb}")
 
@@ -82,3 +86,15 @@ def predict_futre_rf():
 if __name__ == '__main__':
     predict_futre_rf()
 
+# %%
+df = pd.read_csv(consolidated_data_path)
+df = df.sort_values('Date')
+df
+# %%
+df = feature_engineering(df)
+df
+
+# %% 
+# fill missing values with previous value
+df.fillna(method='bfill', inplace=True)
+df.isna().sum()

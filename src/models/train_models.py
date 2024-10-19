@@ -41,9 +41,10 @@ def train_model():
         train_model()
     """
     config = load_yaml_config()
-
+    consolidated_data_path = config['paths']['processed_path_data']
+    predictions_path = config['paths']['prediction_path_data']
     # Load data
-    df = pd.read_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv')
+    df = pd.read_csv(consolidated_data_path)
 
     # feature engineering
     df_engineered = feature_engineering(df)
@@ -90,7 +91,7 @@ def train_model():
                                 'Temperatura Real': y_test, 
                                 'Temperatura Prevista por Random Forest': y_pred_rf, 
                                 'Temperatura Prevista por XGBoost': y_pred_xgb})
-        df_final.to_csv('/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/predictions.csv', index=False)
+        df_final.to_csv(predictions_path, index=False)
     else:
         print("Erro ao criar dataframe final")
     
