@@ -20,24 +20,29 @@ from data_processing.__pycache__.feature_engineering import feature_engineering
 # %%
 def train_model():
     """
-    Treina modelos de previsão de temperatura utilizando Random Forest e XGBoost com base em um conjunto de dados de entrada.
+    Treina e avalia modelos de previsão de temperatura usando Random Forest e XGBoost, 
+    mantendo um histórico de previsões em um arquivo CSV.
 
     Esta função realiza as seguintes etapas:
-    1. Carrega os dados de temperatura de um arquivo CSV.
-    2. Aplica engenharia de características para melhorar os dados.
-    3. Realiza o pré-processamento dos dados, dividindo-os em conjuntos de treino e teste.
-    4. Treina os modelos especificados na configuração (Random Forest e XGBoost) com os dados de treino.
-    5. Faz previsões com os modelos treinados nos dados de teste.
+    
+    1. Carrega os dados processados de temperatura de um arquivo CSV.
+    2. Aplica engenharia de características para criar novas features a partir dos dados originais.
+    3. Realiza o pré-processamento dos dados, incluindo a padronização e a divisão em conjuntos de treino e teste.
+    4. Treina os modelos especificados no arquivo de configuração YAML (Random Forest e XGBoost) utilizando os dados de treino.
+    5. Gera previsões a partir dos modelos treinados com os dados de teste.
     6. Calcula e imprime o erro quadrático médio (MSE) para cada modelo.
-    7. Salva os modelos treinados em arquivos usando pickle.
-    8. Cria um DataFrame com as temperaturas reais e previstas, e o salva em um arquivo CSV.
-
-    A função não retorna valores, mas salva os modelos treinados e as previsões em arquivos específicos.
+    7. Salva os modelos treinados em arquivos pickle.
+    8. Cria um DataFrame contendo as temperaturas reais e previstas, juntamente com as respectivas datas.
+    9. Verifica se um arquivo de previsões ('predictions.csv') já existe:
+        - Se sim, lê o arquivo existente, concatena com as novas previsões e remove duplicatas.
+        - Se não, cria um novo arquivo de previsões com os dados gerados.
+    10. Salva o DataFrame resultante de previsões no arquivo CSV, garantindo que as previsões anteriores sejam mantidas.
 
     Exceções:
-        Se houver um erro ao criar o DataFrame final (por exemplo, se os tamanhos dos arrays não coincidirem), uma mensagem de erro será exibida.
+        - Se houver um erro ao criar o DataFrame final (por exemplo, se os tamanhos das listas de previsões ou datas não coincidirem),
+          a função imprime uma mensagem de erro indicando o problema.
 
-    Exemplos:
+    Exemplo:
         train_model()
     """
     config = load_yaml_config()
@@ -83,15 +88,25 @@ def train_model():
         # print results
         print(f'Model: {model} - MSE: {mse}')
 
+    # Save predictions
     y_test = pd.Series(y_test).reset_index(drop=True)
     y_pred_rf = pd.Series(y_pred_rf).reset_index(drop=True)
     y_pred_xgb = pd.Series(y_pred_xgb).reset_index(drop=True)
     if len(date_col_test) == len(y_test) == len(y_pred):
-        df_final = pd.DataFrame({'Date': date_col_test.reset_index(drop=True),
+        df_new = pd.DataFrame({'Date': date_col_test.reset_index(drop=True),
                                 'Temperatura Real': y_test, 
                                 'Temperatura Prevista por Random Forest': y_pred_rf, 
                                 'Temperatura Prevista por XGBoost': y_pred_xgb})
-        df_final.to_csv(predictions_path, index=False)
+        df_new.to_csv(predictions_path, index=False)
+
+        #  verificar se o arquivo ja existe
+        if os.path.exists(predictions_path):
+            df_existing = pd.read_csv(predictions_path)
+            #  concatenar sem duplicacoes
+            df_combined = pd.concat([df_existing, df_new]).drop_duplicates(subset=['Date']).reset_index(drop=True)
+            df_combined.to_csv(predictions_path, index=False)
+        else:
+            df_new.to_csv(predictions_path, index=False)
     else:
         print("Erro ao criar dataframe final")
     
