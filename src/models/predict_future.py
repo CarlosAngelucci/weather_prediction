@@ -86,15 +86,19 @@ def predict_futre_rf():
 if __name__ == '__main__':
     predict_futre_rf()
 
-# %%
-df = pd.read_csv(consolidated_data_path)
-df = df.sort_values('Date')
-df
-# %%
-df = feature_engineering(df)
-df
+# # %%
+# df = pd.read_csv(consolidated_data_path)
+# df = df.sort_values('Date')
+# df
+# # %%
+# df = feature_engineering(df)
+# df
 
-# %% 
-# fill missing values with previous value
-df.fillna(method='bfill', inplace=True)
-df.isna().sum()
+# # %%
+# df = preprocess_data(df)
+# df
+
+# # %% 
+# # fill missing values with previous value
+# df.fillna(method='bfill', inplace=True)
+# df.isna().sum()
