@@ -58,22 +58,22 @@ def plot_graphs(option, df, graph_type):
 
     st.plotly_chart(fig)
 
-def plot_predictions(df):
+def plot_predictions(df, graph_type):
     df.sort_values('Date', inplace=True)
     fig = go.Figure()
-
-    #  adicionar a linha de temperatura real
-    fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Real'], mode='lines', name='Real Temperature', line=dict(color='blue')))
-
-    #  adicionar as previsoes da random forest
-    fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Prevista por Random Forest'], mode='lines', name='Random Forest', line=dict(color='red')))
-
-    #  adicionar as previsoes da XGBoost
-    fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Prevista por XGBoost'], mode='lines', name='XGBoost', line=dict(color='green')))
-
+    if graph_type == 'line':
+        fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Real'], mode='lines', name='Real Temperature', line=dict(color='blue')))
+        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por Random Forest'], mode='lines', name='Random Forest', line=dict(color='red')))
+        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por XGBoost'], mode='lines', name='XGBoost', line=dict(color='green')))
+    elif graph_type == 'scatter':
+        fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Real'], mode='markers', name='Real Temperature', marker=dict(color='blue')))
+        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por Random Forest'], mode='markers', name='Random Forest', marker=dict(color='red')))
+        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por XGBoost'], mode='markers', name='XGBoost', marker=dict(color='green')))
+    
     fig.update_layout(title='Temperature Predictions',
                         xaxis_title='Date',
                         yaxis_title='Temperature (°C)',
-                        template='presentation')
+                        template='presentation'
+                        )
     fig.update_traces(textposition='top right')
     return fig

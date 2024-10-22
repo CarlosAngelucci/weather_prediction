@@ -41,7 +41,7 @@ elif page == 'Predição':
     st.title('ML Forecast - Weather Campinas.')
 
     #  Plotagem de gráficos - chama as configuracoes que estao no arquivo graphs.py
-    st.plotly_chart(plot_predictions(df_predictions))
+    st.plotly_chart(plot_predictions(df_predictions, graph_type=graph_type))
 
     #  Tabela de dados
     display_table_predictions(df_predictions)

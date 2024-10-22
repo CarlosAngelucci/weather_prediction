@@ -1,0 +1,3 @@
+paths:
+  processed_path_data: '/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed/consolidado.csv'
+  prediction_path_data: '/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/predictions/'
