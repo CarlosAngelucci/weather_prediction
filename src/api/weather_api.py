@@ -23,9 +23,6 @@ data_path = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/
 data_path_processed = configs['paths']['processed_path_data']
 predictions_path = configs['paths']['prediction_path_data']
 
-# data_path_processed = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/processed"
-# predictions_path = "/Users/kaduangelucci/Documents/Estudos/weather_prediction/src/data/predictions/predictions.csv"  # Caminho do arquivo de previsões
-
 # %%
 
 def fetch_weather_data(lat=-22.9056, lon=-47.0608, API_KEY=API_KEY):
@@ -125,7 +122,6 @@ def consolidate_weather_data(data_folder=data_path):
     # sort values by Date
     df = df.sort_values('Date').reset_index(drop=True)
 
-    # df.to_csv(os.path.join(data_path_processed, 'consolidado.csv'), index=False)
     df.to_csv(os.path.join(data_path_processed), index=False)
 
     update_values_predicted(df) # Update pending predictions with real values
