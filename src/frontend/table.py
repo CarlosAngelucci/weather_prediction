@@ -1,23 +1,39 @@
+# %%∫
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+from pathlib import Path
+import sys
 
-def display_table(df):
+CODE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(CODE_DIR))
+
+from database.db_setup import connect_db
+
+
+# %%
+def display_table():
+    conn = connect_db()
+    cursor = conn.cursor()
+    df = pd.read_sql('SELECT * FROM processed_data', conn)
+
     column_names = {
-        'Date': 'Date',
-        'main.temp': 'Temperature',
-        'main.feels_like': 'Feels Like',
-        'main.temp_min': 'Minimum Temperature',
-        'main.temp_max': 'Maximum Temperature',
-        'main.pressure': 'Pressure',
-        'main.humidity': 'Humidity',
-        'wind.speed': 'Wind Speed',
-        'wind.deg': 'Wind Degree',
-        'clouds.all': 'Clouds'
+        'date': 'Date',
+        'main_temp': 'Temperature',
+        'main_feels_like': 'Feels Like',
+        'main_temp_min': 'Minimum Temperature',
+        'main_temp_max': 'Maximum Temperature',
+        'main_pressure': 'Pressure',
+        'main_humidity': 'Humidity',
+        'wind_speed': 'Wind Speed',
+        'wind_deg': 'Wind Degree',
+        'clouds_all': 'Clouds'
     }
     features = ['Date', 'Temperature', 'Feels Like', 'Minimum Temperature', 'Maximum Temperature', 'Pressure', 'Humidity', 'Wind Speed', 'Wind Degree', 'Clouds']
     df.rename(columns=column_names, inplace=True)
     df.reset_index(drop=True, inplace=True)
+    df = df.sort_values('Date')
+    df.drop_duplicates(subset='Date', keep='first', inplace=True, ignore_index=True)
     st.write(df[features])
 
 def display_table_predictions(df):
@@ -31,3 +47,4 @@ def display_table_predictions(df):
     df.rename(columns=column_names, inplace=True)
     df.reset_index(drop=True, inplace=True)
     st.write(df[features])
+

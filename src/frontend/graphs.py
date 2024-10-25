@@ -2,8 +2,15 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from pathlib import Path
+import sys
 
-def plot_graphs(option, df, graph_type):
+CODE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(CODE_DIR))
+
+from utils.db_utils import fetch_data_from_db
+
+def plot_graphs(option, graph_type):
     """
     Função para plotar gráficos de diferentes variáveis climáticas com base na 
     opção e tipo de gráfico selecionados, com rótulos de dados.
@@ -11,24 +18,28 @@ def plot_graphs(option, df, graph_type):
     Parâmetros:
     - option: string com a opção selecionada.
     - graph_type: string com o tipo de gráfico selecionado.
-    - df: DataFrame contendo os dados do clima.
+    - df: DataFrame contendo os dados do clima
     """
+
+    query = 'SELECT * FROM processed_data'
+    df = fetch_data_from_db(query)
+    df = df.sort_values('date')
     #  Plotagem de gráficos
-    x = 'Date'
+    x = 'date'
     if option == 'Temperature':
-        y = 'main.temp'
+        y = 'main_temp'
         title = 'Temperature'
     elif option == 'Feels Like':
-        y = 'main.feels_like'
+        y = 'main_feels_like'
         title = 'Feels Like'
     elif option == 'Minimum Temperature':
-        y = 'main.temp_min'
+        y = 'main_temp_min'
         title = 'Minimum Temperature'
     elif option == 'Maximum Temperature':
-        y = 'main.temp_max'
+        y = 'main_temp_max'
         title = 'Maximum Temperature'
     elif option == 'Humidity':
-        y = 'main.humidity'
+        y = 'main_humidity'
         title = 'Humidity'
     
     if graph_type == 'line':
@@ -41,7 +52,7 @@ def plot_graphs(option, df, graph_type):
                               color=['blue' if y <= 25 else 'red' for y in df[y]]))
         
         fig.add_shape(type='line',
-                      x0=df['Date'].min(), y0=25, x1=df['Date'].max(), y1=25,
+                      x0=df['date'].min(), y0=25, x1=df['date'].max(), y1=25,
                       line=dict(color='white', width=2, dash='dash'))
 
     elif graph_type == 'scatter':
@@ -58,17 +69,20 @@ def plot_graphs(option, df, graph_type):
 
     st.plotly_chart(fig)
 
-def plot_predictions(df, graph_type):
-    df.sort_values('Date', inplace=True)
+def plot_predictions(graph_type):
+    query = 'SELECT * FROM weather_forecast'
+    df = fetch_data_from_db(query)
+    df.sort_values('date', inplace=True)
+
     fig = go.Figure()
     if graph_type == 'line':
-        fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Real'], mode='lines', name='Real Temperature', line=dict(color='blue')))
-        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por Random Forest'], mode='lines', name='Random Forest', line=dict(color='red')))
-        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por XGBoost'], mode='lines', name='XGBoost', line=dict(color='green')))
+        fig.add_trace(go.Scatter(x=df['date'], y=df['actual_temp'], mode='lines', name='Real Temperature', line=dict(color='blue')))
+        fig.add_trace(go.Scatter (x=df['date'], y=df['predicted_temp_rf'], mode='lines', name='Random Forest', line=dict(color='red')))
+        fig.add_trace(go.Scatter (x=df['date'], y=df['predicted_temp_xgb'], mode='lines', name='XGBoost', line=dict(color='green')))
     elif graph_type == 'scatter':
-        fig.add_trace(go.Scatter(x=df['Date'], y=df['Temperatura Real'], mode='markers', name='Real Temperature', marker=dict(color='blue')))
-        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por Random Forest'], mode='markers', name='Random Forest', marker=dict(color='red')))
-        fig.add_trace(go.Scatter (x=df['Date'], y=df['Temperatura Prevista por XGBoost'], mode='markers', name='XGBoost', marker=dict(color='green')))
+        fig.add_trace(go.Scatter(x=df['date'], y=df['actual_temp'], mode='markers', name='Real Temperature', marker=dict(color='blue')))
+        fig.add_trace(go.Scatter (x=df['date'], y=df['predicted_temp_rf'], mode='markers', name='Random Forest', marker=dict(color='red')))
+        fig.add_trace(go.Scatter (x=df['date'], y=df['predicted_temp_xgb'], mode='markers', name='XGBoost', marker=dict(color='green')))
     
     fig.update_layout(title='Temperature Predictions',
                         xaxis_title='Date',

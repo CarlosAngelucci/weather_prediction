@@ -6,6 +6,8 @@ from src.api.weather_api import fetch_weather_data, save_weather_data, consolida
 from src.models.train_models import train_model 
 from src.models.predict_future import predict_futre_rf
 from src.database.insert_data import insert_predictions_data, insert_processed_data
+from src.database.db_setup import connect_db
+from src.utils.load_yaml_config import load_yaml_config
 
 def main():
     # get data from api

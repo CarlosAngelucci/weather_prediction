@@ -18,6 +18,38 @@ consolidate_data  = pd.read_csv(processed_data_path)
 
 # %%
 def preprocess_data(df):
+    """
+Pré-processa os dados para treinamento e teste de um modelo de previsão de temperatura.
+
+A função realiza as seguintes etapas:
+1. Carrega as configurações do arquivo YAML.
+2. Extrai as features (`X`) e a variável-alvo (`y`) do DataFrame.
+3. Divide os dados respeitando a ordem temporal, sem embaralhamento, em 80% para treino e 20% para teste.
+4. Divide a coluna de datas da mesma forma que os dados, para preservar a relação temporal.
+5. Normaliza as features (`X`) de treino e teste usando `StandardScaler`.
+
+Parâmetros:
+-----------
+df : pandas.DataFrame
+    DataFrame contendo as colunas de dados, com a coluna `Date` e a variável-alvo (target) especificada no arquivo YAML.
+
+Retorno:
+--------
+tuple
+    Retorna uma tupla contendo:
+    - `X_train`: array com os dados de treino normalizados.
+    - `X_test`: array com os dados de teste normalizados.
+    - `y_train`: Series com os valores-alvo de treino.
+    - `y_test`: Series com os valores-alvo de teste.
+    - `date_col_test`: Series com as datas correspondentes aos dados de teste.
+
+Notas:
+------
+- O arquivo YAML deve conter a configuração da variável-alvo com a chave `target`.
+- A normalização dos dados é feita com `StandardScaler`, que ajusta os dados de treino e transforma os dados de teste com os mesmos parâmetros.
+- A divisão dos dados é feita com base em 80% para treino e 20% para teste, respeitando a ordem temporal dos dados sem embaralhamento.
+"""
+
     yaml_config = load_yaml_config()
 
     date_col = df['Date']
