@@ -10,6 +10,63 @@ sys.path.append(str(CODE_DIR))
 
 from utils.db_utils import fetch_data_from_db
 
+def add_rectangle(fig, df):
+    """
+    Adiciona retângulos coloridos a um gráfico para destacar faixas específicas de temperatura.
+
+    Esta função cria dois retângulos no gráfico Plotly para destacar visualmente as áreas de temperaturas abaixo e acima de 25°C:
+    - Um retângulo azul claro para representar temperaturas abaixo de 25°C (0 a 24.99).
+    - Um retângulo vermelho claro para representar temperaturas entre 25°C e 35°C.
+
+    Os retângulos se estendem horizontalmente 10 horas antes e depois dos limites mínimos e máximos da coluna `date` do DataFrame.
+
+    Parâmetros:
+    -----------
+    fig : plotly.graph_objects.Figure
+        O objeto de figura Plotly ao qual os retângulos serão adicionados.
+    
+    df : pandas.DataFrame
+        DataFrame contendo a coluna `date`, que define o intervalo de exibição dos retângulos no eixo x.
+
+    Retorno:
+    --------
+    plotly.graph_objects.Figure
+        O objeto de figura Plotly com os retângulos adicionados.
+
+    Notas:
+    ------
+    - A faixa azul claro indica temperaturas abaixo de 25°C e utiliza `RoyalBlue` para a borda e `LightSkyBlue` para o preenchimento.
+    - A faixa vermelho claro indica temperaturas entre 25°C e 35°C, com `red` para a borda e `LightCoral` para o preenchimento.
+    - A função expande o eixo x 10 horas para cada lado dos limites de data do DataFrame para garantir que os retângulos sejam bem visíveis.
+    """
+    #  initial and final position of the rectangle shifted 10 hours to the left and right
+    x_0 = df['date'].min()-pd.Timedelta(hours=10)
+    x_1 = df['date'].max()+pd.Timedelta(hours=10)
+
+    #  initial and final position of the blue rectangle
+    y_0 = 0
+    y_1 = 24.99
+
+    #  initial and final position of the red rectangle
+    y_3 = 25
+    y_4 = 35
+
+    #  adds a blue rectangle for temperatures below 25°C
+    fig.add_shape(type='rect', x0=x_0, y0=y_0, x1=x_1, y1=y_1,
+                line=dict(
+                    color='RoyalBlue', 
+                    width=2,),
+                    fillcolor='LightSkyBlue',
+                    opacity=0.3)
+    #  adds a red rectangle for temperatures above 25°C
+    fig.add_shape(type='rect', x0=x_0, y0=y_3, x1=x_1, y1=y_4,
+                line=dict(
+                    color='red', 
+                    width=2,),
+                    fillcolor='LightCoral',
+                    opacity=0.3)
+    return fig 
+
 def plot_graphs(option, graph_type):
     """
     Função para plotar gráficos de diferentes variáveis climáticas com base na 
@@ -43,7 +100,7 @@ def plot_graphs(option, graph_type):
         title = 'Humidity'
     
     if graph_type == 'line':
-        fig = px.line(df, x=x, y=y, title=title, text=y, template='presentation', markers=True, line_shape='linear')
+        fig = px.line(df, x=x, y=y, title=title, text=y, template='plotly_white', markers=True, line_shape='linear')
         fig.update_yaxes(title_text=title)
 
         fig.update_traces(mode='lines+markers',
@@ -51,30 +108,15 @@ def plot_graphs(option, graph_type):
                           marker=dict(
                               size=7, 
                               color=['blue' if y <= 25 else 'red' for y in df[y]]))
-        x_0 = df['date'].min()-pd.Timedelta(hours=10)
-        x_1 = df['date'].max()+pd.Timedelta(hours=10)
-        y_0 = 0
-        y_1 = 24.99
-        y_3 = 25
-        y_4 = 35
 
+        #  adds a horizontal line at 25°C
         fig.add_shape(type='line',
                       x0=df['date'].min(), y0=25, x1=df['date'].max(), y1=25,
                       line=dict(color='white', width=2, dash='dash'))
         
+        #  check if its not humidity because of the scale
         if option not in ['Humidity']:
-            fig.add_shape(type='rect', x0=x_0, y0=y_0, x1=x_1, y1=y_1,
-                        line=dict(
-                            color='RoyalBlue', 
-                            width=2,),
-                            fillcolor='LightSkyBlue',
-                            opacity=0.3)
-            fig.add_shape(type='rect', x0=x_0, y0=y_3, x1=x_1, y1=y_4,
-                        line=dict(
-                            color='red', 
-                            width=2,),
-                            fillcolor='LightCoral',
-                            opacity=0.3) 
+            fig = add_rectangle(fig, df)
             
 
     elif graph_type == 'scatter':
@@ -83,7 +125,10 @@ def plot_graphs(option, graph_type):
         fig.update_traces(textposition='top right',
                           marker=dict(size=10, 
                                       color=['blue' if y <= 25 else 'red' for y in df[y]]))
-    
+        
+        if option not in ['Humidity']:
+            fig = add_rectangle(fig, df)
+
     else:
         st.write('Invalid graph type')
         return
