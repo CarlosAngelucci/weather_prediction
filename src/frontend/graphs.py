@@ -43,17 +43,39 @@ def plot_graphs(option, graph_type):
         title = 'Humidity'
     
     if graph_type == 'line':
-        fig = px.line(df, x=x, y=y, title=title, text=y, template='presentation', markers=True)
+        fig = px.line(df, x=x, y=y, title=title, text=y, template='presentation', markers=True, line_shape='linear')
+        fig.update_yaxes(title_text=title)
 
         fig.update_traces(mode='lines+markers',
                           textposition='top right', 
                           marker=dict(
-                              size=10, 
+                              size=7, 
                               color=['blue' if y <= 25 else 'red' for y in df[y]]))
-        
+        x_0 = df['date'].min()-pd.Timedelta(hours=10)
+        x_1 = df['date'].max()+pd.Timedelta(hours=10)
+        y_0 = 0
+        y_1 = 24.99
+        y_3 = 25
+        y_4 = 35
+
         fig.add_shape(type='line',
                       x0=df['date'].min(), y0=25, x1=df['date'].max(), y1=25,
                       line=dict(color='white', width=2, dash='dash'))
+        
+        if option not in ['Humidity']:
+            fig.add_shape(type='rect', x0=x_0, y0=y_0, x1=x_1, y1=y_1,
+                        line=dict(
+                            color='RoyalBlue', 
+                            width=2,),
+                            fillcolor='LightSkyBlue',
+                            opacity=0.3)
+            fig.add_shape(type='rect', x0=x_0, y0=y_3, x1=x_1, y1=y_4,
+                        line=dict(
+                            color='red', 
+                            width=2,),
+                            fillcolor='LightCoral',
+                            opacity=0.3) 
+            
 
     elif graph_type == 'scatter':
         fig = px.scatter(df, x=x, y=y, title=title, text=y)

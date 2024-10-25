@@ -44,5 +44,5 @@ elif page == 'Predição':
     st.plotly_chart(plot_predictions(graph_type=graph_type))
 
     #  Tabela de dados
-    display_table_predictions(df_predictions)
+    display_table_predictions()
 

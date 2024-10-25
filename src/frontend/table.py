@@ -36,15 +36,21 @@ def display_table():
     df.drop_duplicates(subset='Date', keep='first', inplace=True, ignore_index=True)
     st.write(df[features])
 
-def display_table_predictions(df):
+def display_table_predictions():
+    conn = connect_db()
+    cursor = conn.cursor()
+    df = pd.read_sql('SELECT * FROM weather_forecast', conn)
+
     column_names = {
-        'Date': 'Date',
-        'Temperatura Real': 'Real Temperature',
-        'Temperatura Prevista por Random Forest': 'Predicted Temperature by Random Forest',
-        'Temperatura Prevista por XGBoost': 'Predicted Temperature by XGBoost'
+        'date': 'Date',
+        'actual_temp': 'Real Temperature',
+        'predicted_temp_rf': 'Predicted Temperature by Random Forest',
+        'predicted_temp_xgb': 'Predicted Temperature by XGBoost'
     }
     features = ['Date', 'Real Temperature', 'Predicted Temperature by Random Forest', 'Predicted Temperature by XGBoost']
     df.rename(columns=column_names, inplace=True)
     df.reset_index(drop=True, inplace=True)
+    df = df.sort_values('Date')
+    df.drop_duplicates(subset='Date', keep='first', inplace=True, ignore_index=True)
     st.write(df[features])
 
