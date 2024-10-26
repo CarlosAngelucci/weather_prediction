@@ -34,7 +34,18 @@ def display_table():
     df.reset_index(drop=True, inplace=True)
     df = df.sort_values('Date')
     df.drop_duplicates(subset='Date', keep='first', inplace=True, ignore_index=True)
-    st.write(df[features])
+
+    st.markdown("""
+    <style>
+    .center-table{
+                display: flex;
+                justify-content: center;
+                }            
+                </style>
+                """,unsafe_allow_html=True)
+    st.markdown('<div class="center-table>', unsafe_allow_html=True)
+    st.dataframe(df[features], use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def display_table_predictions():
     conn = connect_db()
@@ -52,5 +63,15 @@ def display_table_predictions():
     df.reset_index(drop=True, inplace=True)
     df = df.sort_values('Date')
     df.drop_duplicates(subset='Date', keep='first', inplace=True, ignore_index=True)
-    st.write(df[features])
 
+    st.markdown("""
+    <style>
+    .center-table{
+                display: flex;
+                justify-content: center;
+                }            
+                </style>
+                """,unsafe_allow_html=True)
+    st.markdown('<div class="center-table>', unsafe_allow_html=True)
+    st.dataframe(df[features], use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)

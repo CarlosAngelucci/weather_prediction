@@ -5,12 +5,12 @@ import sys
 from pathlib import Path
 import yaml
 
-CODE_DIR = Path(__file__).resolve().parents[0]
+CODE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(CODE_DIR))
 
-from src.data_processing.__pycache__.feature_engineering import feature_engineering
-from src.data_processing.__pycache__.data_preprocessing import preprocess_data
-from src.utils.load_yaml_config import load_yaml_config
+from data_processing.__pycache__.feature_engineering import feature_engineering
+from data_processing.__pycache__.data_preprocessing import preprocess_data
+from utils.load_yaml_config import load_yaml_config
 
 from sklearn.preprocessing import StandardScaler
 

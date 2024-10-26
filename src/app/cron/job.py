@@ -2,13 +2,19 @@
 import requests
 import pandas as pd
 import os
-from src.api.weather_api import fetch_weather_data, save_weather_data, consolidate_weather_data
-from src.models.train_models import train_model 
-from src.models.predict_future import predict_futre_rf
-from src.database.insert_data import insert_predictions_data, insert_processed_data
-from src.database.db_setup import connect_db
-from src.utils.load_yaml_config import load_yaml_config
+from pathlib import Path
+import sys
 
+CODE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(CODE_DIR))
+
+from api.weather_api import fetch_weather_data, save_weather_data, consolidate_weather_data
+from models.train_models import train_model 
+from models.predict_future import predict_futre_rf
+from database.insert_data import insert_predictions_data, insert_processed_data
+from database.db_setup import connect_db
+from utils.load_yaml_config import load_yaml_config
+# %%
 def main():
     # get data from api
     weather_data = fetch_weather_data()

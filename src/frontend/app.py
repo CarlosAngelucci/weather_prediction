@@ -29,7 +29,17 @@ st.set_page_config(page_title='Weather Analysis and Forecast With Machine Learni
 option, graph_type, page = config_sidebar()
 
 if page == 'Home' or page == None:
-    st.title('Weather Campinas')
+    st.markdown("""
+    <style>
+    .centered-title{
+                text-align: center;
+                font-size: 50px;
+                color: #FF4B4B;
+    }
+    </style>
+                """,
+                unsafe_allow_html=True)
+    st.markdown('<h1 class="centered-title">Weather Campinas</h1>', unsafe_allow_html=True)
     
     #  Plotagem de gráficos - chama as configuracoes que estao no arquivo graphs.py
     plot_graphs(option=option, graph_type=graph_type)
@@ -38,7 +48,17 @@ if page == 'Home' or page == None:
     display_table()
 
 elif page == 'Predição':
-    st.title('ML Forecast - Weather Campinas.')
+    st.markdown("""
+    <style>
+    .centered-title{
+                text-align: center;
+                font-size: 50px;
+                color: #FF4B4B;
+    }
+    </style>
+                """,
+                unsafe_allow_html=True)
+    st.markdown('<h1 class="centered-title">ML Forecast - Weather Campinas.</h1>', unsafe_allow_html=True)
 
     #  Plotagem de gráficos - chama as configuracoes que estao no arquivo graphs.py
     st.plotly_chart(plot_predictions(graph_type=graph_type))
