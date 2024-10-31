@@ -8,7 +8,7 @@ sys.path.append(str(CODE_DIR))
 
 from app.cron.job import main
 from app.routers import endpoints
-# import uvicorn
+import uvicorn
 
 # %%
 app = FastAPI()
@@ -22,5 +22,5 @@ scheduler.start()
 def shutdown_event():
     scheduler.shutdown()
 
-# if __name__ == "main":
-#     uvicorn.run("src.app.main:app", host="localhost", port=8000, reload=True)
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="localhost", port=8000, reload=True)

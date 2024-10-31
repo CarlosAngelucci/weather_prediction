@@ -80,13 +80,14 @@ def predict_futre_rf():
 
     df_predicoes.to_csv(predictions_path, index=False)
 
-    print(f"Predição do Random Forest: {predicao_rf} \nPredicao do XGBoost: {predicao_xgb}")
+    print(f">>>>>>>>>>Predição do Random Forest: {predicao_rf}<<<<<<<<<<\n>>>>>>>>>>Predicao do XGBoost: {predicao_xgb}<<<<<<<<<")
 
 
 if __name__ == '__main__':
     predict_futre_rf()
 
 # # %%
+#  =================== DEBUG ======================
 # df = pd.read_csv(consolidated_data_path)
 # df = df.sort_values('Date')
 # df

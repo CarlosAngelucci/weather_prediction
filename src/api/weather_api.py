@@ -32,15 +32,15 @@ def fetch_weather_data(lat=-22.9056, lon=-47.0608, API_KEY=API_KEY):
     Esta função envia uma requisição HTTP para a API OpenWeather, utilizando as coordenadas geográficas (latitude e longitude) e uma chave de API, retornando os dados meteorológicos no formato JSON se a solicitação for bem-sucedida.
 
     Parâmetros:
-    - lat (float): Latitude da localização para a qual os dados meteorológicos serão buscados. O valor padrão é -22.9056 (Campinas, SP).
-    - lon (float): Longitude da localização para a qual os dados meteorológicos serão buscados. O valor padrão é -47.0608 (Campinas, SP).
-    - API_KEY (str): Chave da API do OpenWeather necessária para autenticar a requisição.
+    :param - lat (float): Latitude da localização para a qual os dados meteorológicos serão buscados. O valor padrão é -22.9056 (Campinas, SP).
+    :param - lon (float): Longitude da localização para a qual os dados meteorológicos serão buscados. O valor padrão é -47.0608 (Campinas, SP).
+    :param - API_KEY (str): Chave da API do OpenWeather necessária para autenticar a requisição.
 
     Retorna:
-    - dict: Dados meteorológicos retornados pela API, no formato JSON.
+    :return - dict: Dados meteorológicos retornados pela API, no formato JSON.
 
     Exceções:
-    - Gera uma exceção se a requisição não for bem-sucedida, exibindo o código de erro HTTP e a mensagem de erro.
+    :raise - Gera uma exceção se a requisição não for bem-sucedida, exibindo o código de erro HTTP e a mensagem de erro.
     """
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
     response = requests.get(url)

@@ -11,6 +11,7 @@ sys.path.append(str(CODE_DIR))
 from utils.load_yaml_config import load_yaml_config
 from database.db_setup import connect_db
 from database.process_data import process_data
+from datetime import datetime
 
 configs = load_yaml_config()
 consolidated_data_path = configs['paths']['processed_path_data']
@@ -80,12 +81,12 @@ def insert_processed_data():
         try:
                 cursor.executemany(query, new_data)
                 conn.commit()
-                print(f'Data inserted successfully\n{len(new_data)} new records inserted.')
+                print(f'>>>>>>>>Data inserted successfully\n{len(new_data)} new records inserted.<<<<<<<<<')
         except Exception as e:
                 conn.rollback()
-                print(f'Error: {str(e)}')
+                print(f'>>>>>>>Error: {str(e)}')
     else:
-        print('No new records to insert.')
+        print('>>>>>>>>>No new records to insert.<<<<<<<<')
 
 def insert_predictions_data():
     """
@@ -145,17 +146,108 @@ def insert_predictions_data():
         try:
             cursor.executemany(query, new_data)
             conn.commit()
-            print(f'Predictions inserted successfully.\n{len(new_data)} new records inserted.')
+            print(f'>>>>>>>>Predictions inserted successfully.<<<<<<<<\n>>>>>>>>{len(new_data)} new records inserted.<<<<<<<<')
         except Exception as e:
             conn.rollback()
             print(f'Error: {str(e)}')
     else:
-        print('No new records to insert.')
+        print('>>>>>>>>>No new records to insert.<<<<<<<<<')
+    
+    insert_real_values()
 
+def insert_real_values():
+    """
+    Insere o valor da última temperatura real na tabela `weather_forecast`, correspondendo à última data presente
+    na tabela de previsões.
 
+    A função realiza os seguintes passos:
+        1. Conecta ao banco de dados usando `connect_db()`.
+        2. Carrega os dados das tabelas `processed_data` e `weather_forecast`.
+        3. Obtém o valor da última temperatura real (`main_temp`) de `processed_data`.
+        4. Obtém a última data de previsão de `weather_forecast`.
+        5. Atualiza a tabela `weather_forecast`, definindo o valor `actual_temp` na última linha com o valor da 
+           temperatura real correspondente.
+    
+    Exceções:
+        Caso ocorra algum erro durante a execução do comando SQL, a transação é revertida e uma mensagem de erro é exibida.
+    
+    Dependências:
+        - A função `connect_db()` deve retornar uma conexão válida com o banco de dados.
+        - As tabelas `processed_data` e `weather_forecast` devem existir e conter as colunas `main_temp` e `date`, 
+          respectivamente.
+    
+    Retorno:
+        Nenhum valor de retorno. Exibe uma mensagem de sucesso se a operação foi bem-sucedida ou uma mensagem de erro 
+        em caso de falha.
+
+    """
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    # get the last processed data and predictions
+    df = pd.read_sql('SELECT * from processed_data', conn)
+    df = df.sort_values(by='date')
+    df_predictions = pd.read_sql('SELECT * from weather_forecast', conn)
+    df_predictions = df_predictions.sort_values(by='date')
+
+    time_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    time_now = pd.to_datetime(time_now)
+
+    # get the last real temperature from processed data
+    real_temp = float(df['main_temp'].iloc[-1])
+    # get the last date from predictions table
+    last_date = df_predictions['date'].iloc[-2]
+
+    #  check if the last date is less than the current time (it means that it is time to insert the real temperature)
+    delta_time = time_now > last_date
+    #  update the last row of the predictions table with the real temperature
+    query = """
+    UPDATE weather_forecast
+    SET actual_temp = %s
+    WHERE date = %s
+    """
+    if df_predictions['actual_temp'].iloc[-2] == 0 and delta_time:
+        try:
+            cursor.execute(query, (real_temp, last_date))
+            conn.commit()
+            print('>>>>>>>>>Real temperature inserted successfull.<<<<<<<<<<')
+        except Exception as e:
+            conn.rollback()
+            print(f'Error: {str(e)}')
+    else:
+        print('>>>>>>>>>Real temperature already inserted.<<<<<<<<<<')
 
 if __name__ == '__main__':
     insert_processed_data()
     insert_predictions_data()
 
+# %%
+# conn = connect_db()
+# cursor = conn.cursor()
+# # %%
+# df = pd.read_sql('SELECT * from processed_data', conn)
+# df = df.sort_values(by='date')
+# df['main_temp'].iloc[-1]
 
+# # %%
+# df_forecast = pd.read_sql('SELECT * from weather_forecast', conn)
+# df_forecast = df_forecast.sort_values(by='date')
+# df_forecast['actual_temp'].iloc[-3]
+
+# # %%
+# datetime_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+# datetime_now
+
+# # %% 
+# last_date = df_forecast['date'].iloc[-2]
+# last_date
+
+# # %%
+# delta_time = pd.to_datetime(datetime_now) > last_date
+# delta_time
+
+
+# # %%
+# condition = df_forecast['actual_temp'].iloc[-2] == 0 and delta_time
+# condition
